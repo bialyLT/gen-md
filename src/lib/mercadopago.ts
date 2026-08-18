@@ -46,7 +46,7 @@ export async function createSubscription(params: {
   notificationUrl: string;
   reason?: string;
 }): Promise<{ id: string; initPoint: string | null }> {
-  const res = await fetch(`${MP_API}/v1/preapproval`, {
+  const res = await fetch(`${MP_API}/preapproval`, {
     method: "POST",
     headers: {
       Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`,
@@ -82,7 +82,7 @@ export async function createSubscription(params: {
 export async function getSubscription(
   subscriptionId: string
 ): Promise<MpPreapproval | null> {
-  const res = await fetch(`${MP_API}/v1/preapproval/${subscriptionId}`, {
+  const res = await fetch(`${MP_API}/preapproval/${subscriptionId}`, {
     headers: { Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}` },
   });
   if (!res.ok) return null;
