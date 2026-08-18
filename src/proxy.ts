@@ -15,9 +15,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  const authUrl = process.env.AUTH_URL;
   const token = await getToken({
     req: request,
     secret: process.env.AUTH_SECRET,
+    secureCookie: authUrl
+      ? authUrl.startsWith("https://")
+      : request.nextUrl.protocol === "https:",
   });
 
   if (!token) {
