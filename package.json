@@ -7,6 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "db:admin": "tsx --env-file=.env scripts/make-admin.ts",
+    "db:seed": "tsx --env-file=.env scripts/seed-plans.ts",
     "postinstall": "prisma generate"
   },
   "dependencies": {

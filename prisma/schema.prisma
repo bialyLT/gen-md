@@ -54,6 +54,28 @@ model User {
   subscription     Subscription?
 }
 
+/**
+ * Planes de suscripción ofrecidos a los usuarios. Se administran
+ * desde el panel de admin (/admin/plans). Cada plan puede tener su
+ * propio link de checkout de Mercado Pago (opción "sin integración")
+ * o usar el flujo por API.
+ */
+model PricingPlan {
+  id              String   @id @default(cuid())
+  name            String
+  description     String?
+  priceArs        Int
+  frequency       Int      @default(1)
+  mpPlanInitPoint String?
+  mpPlanId        String?
+  active          Boolean  @default(true)
+  sortOrder       Int      @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([active, sortOrder])
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String

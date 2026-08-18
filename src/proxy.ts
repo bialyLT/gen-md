@@ -30,6 +30,10 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (pathname.startsWith("/admin") && token.role !== "ADMIN") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   const response = NextResponse.next();
   response.headers.set("x-user-id", token.id as string);
   response.headers.set("x-user-plan", token.plan as string);

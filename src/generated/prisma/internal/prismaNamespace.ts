@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  PricingPlan: 'PricingPlan',
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
@@ -423,7 +424,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "account" | "session" | "verificationToken" | "chat" | "message" | "imageGeneration" | "generatedFile" | "subscription" | "usageRecord" | "webhookEvent"
+    modelProps: "user" | "pricingPlan" | "account" | "session" | "verificationToken" | "chat" | "message" | "imageGeneration" | "generatedFile" | "subscription" | "usageRecord" | "webhookEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -498,6 +499,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PricingPlan: {
+      payload: Prisma.$PricingPlanPayload<ExtArgs>
+      fields: Prisma.PricingPlanFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PricingPlanFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PricingPlanFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>
+        }
+        findFirst: {
+          args: Prisma.PricingPlanFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PricingPlanFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>
+        }
+        findMany: {
+          args: Prisma.PricingPlanFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>[]
+        }
+        create: {
+          args: Prisma.PricingPlanCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>
+        }
+        createMany: {
+          args: Prisma.PricingPlanCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PricingPlanCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>[]
+        }
+        delete: {
+          args: Prisma.PricingPlanDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>
+        }
+        update: {
+          args: Prisma.PricingPlanUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>
+        }
+        deleteMany: {
+          args: Prisma.PricingPlanDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PricingPlanUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PricingPlanUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>[]
+        }
+        upsert: {
+          args: Prisma.PricingPlanUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PricingPlanPayload>
+        }
+        aggregate: {
+          args: Prisma.PricingPlanAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePricingPlan>
+        }
+        groupBy: {
+          args: Prisma.PricingPlanGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PricingPlanGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PricingPlanCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PricingPlanCountAggregateOutputType> | number
         }
       }
     }
@@ -1296,6 +1371,23 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const PricingPlanScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  priceArs: 'priceArs',
+  frequency: 'frequency',
+  mpPlanInitPoint: 'mpPlanInitPoint',
+  mpPlanId: 'mpPlanId',
+  active: 'active',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PricingPlanScalarFieldEnum = (typeof PricingPlanScalarFieldEnum)[keyof typeof PricingPlanScalarFieldEnum]
+
+
 export const AccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -1525,6 +1617,13 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
  * Reference to a field of type 'MessageRole'
  */
 export type EnumMessageRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageRole'>
@@ -1563,13 +1662,6 @@ export type EnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'SubscriptionStatus[]'
  */
 export type ListEnumSubscriptionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SubscriptionStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Boolean'
- */
-export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1738,6 +1830,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  pricingPlan?: Prisma.PricingPlanOmit
   account?: Prisma.AccountOmit
   session?: Prisma.SessionOmit
   verificationToken?: Prisma.VerificationTokenOmit

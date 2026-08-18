@@ -13,7 +13,7 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
 
-  const [chats, usage] = await Promise.all([
+  const [chats, usage, plans] = await Promise.all([
     prisma.chat.findMany({
       where: { userId: session.user.id },
       orderBy: { updatedAt: "desc" },
@@ -29,6 +29,10 @@ export default async function DashboardPage() {
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
       take: 10,
+    }),
+    prisma.pricingPlan.findMany({
+      where: { active: true },
+      orderBy: { sortOrder: "asc" },
     }),
   ]);
 
@@ -69,11 +73,43 @@ export default async function DashboardPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {plan === "FREE" && <UpgradeButton />}
             <NewChatButton />
             <LogoutButton />
           </div>
         </div>
+
+        {plan === "FREE" && plans.length > 0 && (
+          <section className="mb-8">
+            <h2 className="mb-3 text-sm font-medium text-zinc-500">
+              Elegí tu plan
+            </h2>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {plans.map((p) => (
+                <div
+                  key={p.id}
+                  className="flex flex-col rounded-xl border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950"
+                >
+                  <p className="font-medium">{p.name}</p>
+                  <p className="mt-1 text-2xl font-semibold">
+                    ${p.priceArs.toLocaleString("es-AR")}
+                    <span className="text-sm font-normal text-zinc-400">
+                      {" "}
+                      / {p.frequency} mes(es)
+                    </span>
+                  </p>
+                  {p.description && (
+                    <p className="mt-2 flex-1 text-sm text-zinc-500">
+                      {p.description}
+                    </p>
+                  )}
+                  <div className="mt-4">
+                    <UpgradeButton planId={p.id} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="mb-8 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950">
           <h2 className="mb-3 text-sm font-medium text-zinc-500">

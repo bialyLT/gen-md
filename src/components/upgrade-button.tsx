@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-export function UpgradeButton() {
+export function UpgradeButton({ planId }: { planId: string }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -10,7 +10,11 @@ export function UpgradeButton() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/mercadopago/checkout", { method: "POST" });
+      const res = await fetch("/api/mercadopago/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ planId }),
+      });
       const data = await res.json();
       if (!res.ok) {
         setError(data.error ?? "No se pudo iniciar el pago");
@@ -31,7 +35,7 @@ export function UpgradeButton() {
       <button
         onClick={upgrade}
         disabled={loading}
-        className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-40"
+        className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-40"
       >
         {loading ? "Redirigiendo..." : "Mejorar plan"}
       </button>

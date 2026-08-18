@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  PricingPlan: 'PricingPlan',
   Account: 'Account',
   Session: 'Session',
   VerificationToken: 'VerificationToken',
@@ -94,6 +95,23 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PricingPlanScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  priceArs: 'priceArs',
+  frequency: 'frequency',
+  mpPlanInitPoint: 'mpPlanInitPoint',
+  mpPlanId: 'mpPlanId',
+  active: 'active',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PricingPlanScalarFieldEnum = (typeof PricingPlanScalarFieldEnum)[keyof typeof PricingPlanScalarFieldEnum]
 
 
 export const AccountScalarFieldEnum = {

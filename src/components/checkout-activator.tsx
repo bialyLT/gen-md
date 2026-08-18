@@ -26,7 +26,6 @@ function ActivatorInner() {
         const res = await fetch(
           `/api/mercadopago/activate?preapproval_id=${encodeURIComponent(id)}`
         );
-        const data = (await res.json()) as { error?: string };
         if (!res.ok) {
           setState("error");
           return;

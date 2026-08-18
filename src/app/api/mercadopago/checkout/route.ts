@@ -1,24 +1,33 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import {
-  createSubscription,
-  isMpConfigured,
-  mpPlanInitPoint,
-  mpPriceArs,
-} from "@/lib/mercadopago";
+import { createSubscription, isMpConfigured } from "@/lib/mercadopago";
+import { z } from "zod";
 
-export async function POST() {
+const bodySchema = z.object({ planId: z.string().min(1) });
+
+export async function POST(request: Request) {
   const auth = await requireUser();
   if (!auth.ok) return auth.res;
 
-  const planInitPoint = mpPlanInitPoint();
+  const body = await request.json().catch(() => null);
+  const parsed = bodySchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Falta el plan" }, { status: 400 });
+  }
+
+  const plan = await prisma.pricingPlan.findUnique({
+    where: { id: parsed.data.planId },
+  });
+  if (!plan || !plan.active) {
+    return NextResponse.json({ error: "Plan no disponible" }, { status: 404 });
+  }
 
   // Opción "sin integración": plan creado en el panel de Mercado Pago.
   // Redirigimos al link de checkout; la activación ocurre al volver con
   // ?checkout=success&preapproval_id=... (ver /api/mercadopago/activate).
-  if (planInitPoint) {
-    return NextResponse.json({ url: planInitPoint });
+  if (plan.mpPlanInitPoint) {
+    return NextResponse.json({ url: plan.mpPlanInitPoint });
   }
 
   if (!isMpConfigured()) {
@@ -51,7 +60,7 @@ export async function POST() {
     ({ id, initPoint } = await createSubscription({
       userId: user.id,
       payerEmail: user.email,
-      unitPrice: mpPriceArs(),
+      unitPrice: plan.priceArs,
       backUrl: `${appUrl}/dashboard`,
       notificationUrl,
     }));

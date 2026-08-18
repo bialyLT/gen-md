@@ -47,6 +47,15 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model PricingPlan
+ * *
+ *  * Planes de suscripción ofrecidos a los usuarios. Se administran
+ *  * desde el panel de admin (/admin/plans). Cada plan puede tener su
+ *  * propio link de checkout de Mercado Pago (opción "sin integración")
+ *  * o usar el flujo por API.
+ */
+export type PricingPlan = Prisma.PricingPlanModel
+/**
  * Model Account
  * 
  */
