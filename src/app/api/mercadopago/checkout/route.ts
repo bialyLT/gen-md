@@ -35,13 +35,29 @@ export async function POST() {
   const notificationUrl =
     process.env.MP_WEBHOOK_URL ?? `${appUrl}/api/mercadopago/webhook`;
 
-  const { id, initPoint } = await createSubscription({
-    userId: user.id,
-    payerEmail: user.email,
-    unitPrice: mpPriceArs(),
-    backUrl: `${appUrl}/dashboard`,
-    notificationUrl,
-  });
+  let id: string;
+  let initPoint: string | null;
+  try {
+    ({ id, initPoint } = await createSubscription({
+      userId: user.id,
+      payerEmail: user.email,
+      unitPrice: mpPriceArs(),
+      backUrl: `${appUrl}/dashboard`,
+      notificationUrl,
+    }));
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error desconocido";
+    const isConfig = message.includes("resource not found");
+    return NextResponse.json(
+      {
+        error: isConfig
+          ? "La cuenta de Mercado Pago no tiene habilitado el producto Suscripciones. Activálo en Tus integraciones → la aplicación → Suscripciones."
+          : "Mercado Pago rechazó la solicitud.",
+        detail: message,
+      },
+      { status: 502 }
+    );
+  }
 
   await prisma.subscription.upsert({
     where: { userId: user.id },
