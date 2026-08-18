@@ -61,13 +61,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       if (trigger === "update" && session?.plan) {
         token.plan = session.plan;
       }
-      if (!token.plan) {
-        const dbUser = await prisma.user.findUnique({
-          where: { id: token.id as string },
-          select: { plan: true, role: true },
-        });
-        token.plan = dbUser?.plan ?? "FREE";
-        token.role = dbUser?.role ?? "USER";
+      const dbUser = await prisma.user.findUnique({
+        where: { id: token.id as string },
+        select: { plan: true, role: true },
+      });
+      if (dbUser) {
+        token.plan = dbUser.plan;
+        token.role = dbUser.role;
+      } else {
+        token.plan = token.plan ?? "FREE";
+        token.role = token.role ?? "USER";
       }
       return token;
     },
