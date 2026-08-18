@@ -4,12 +4,22 @@ import { prisma } from "@/lib/prisma";
 import {
   createSubscription,
   isMpConfigured,
+  mpPlanInitPoint,
   mpPriceArs,
 } from "@/lib/mercadopago";
 
 export async function POST() {
   const auth = await requireUser();
   if (!auth.ok) return auth.res;
+
+  const planInitPoint = mpPlanInitPoint();
+
+  // Opción "sin integración": plan creado en el panel de Mercado Pago.
+  // Redirigimos al link de checkout; la activación ocurre al volver con
+  // ?checkout=success&preapproval_id=... (ver /api/mercadopago/activate).
+  if (planInitPoint) {
+    return NextResponse.json({ url: planInitPoint });
+  }
 
   if (!isMpConfigured()) {
     return NextResponse.json(

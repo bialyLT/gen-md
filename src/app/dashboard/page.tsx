@@ -7,15 +7,11 @@ import { NewChatButton } from "@/components/new-chat-button";
 import { LogoutButton } from "@/components/logout-button";
 import { DeleteChatButton } from "@/components/delete-chat-button";
 import { UpgradeButton } from "@/components/upgrade-button";
+import { CheckoutActivator } from "@/components/checkout-activator";
 
-export default async function DashboardPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ checkout?: string }>;
-}) {
+export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user) redirect("/login");
-  const { checkout } = await searchParams;
 
   const [chats, usage] = await Promise.all([
     prisma.chat.findMany({
@@ -63,11 +59,7 @@ export default async function DashboardPage({
       </aside>
 
       <main className="flex-1 p-6">
-        {checkout === "success" && (
-          <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
-            Pago confirmado. Tu plan Pro está activo.
-          </div>
-        )}
+        <CheckoutActivator />
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-semibold">Panel</h1>

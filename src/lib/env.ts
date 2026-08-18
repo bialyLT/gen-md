@@ -28,6 +28,10 @@ const envSchema = z.object({
   MP_ACCESS_TOKEN: z.string().optional(),
   MP_WEBHOOK_URL: z.string().url().optional(),
   MP_PRICE_ARS: z.coerce.number().optional(),
+  // Link de checkout del plan creado en el panel de Mercado Pago (sin integración).
+  // Si está configurado, "Mejorar plan" redirige a este link y la activación
+  // ocurre al volver con ?checkout=success&preapproval_id=...
+  MP_PLAN_INIT_POINT: z.string().url().optional(),
 
   // Rate limiting
   UPSTASH_REDIS_REST_URL: z.string().url().optional(),

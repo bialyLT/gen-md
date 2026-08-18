@@ -58,6 +58,13 @@ async function handlePayment(paymentId: string) {
   if (!userId && payment.preapproval_id) {
     const sub = await getSubscription(String(payment.preapproval_id));
     userId = sub?.external_reference ?? null;
+    if (!userId) {
+      const local = await prisma.subscription.findUnique({
+        where: { mpPreferenceId: String(payment.preapproval_id) },
+        select: { userId: true },
+      });
+      userId = local?.userId ?? null;
+    }
   }
 
   if (userId && payment.status === "approved") {
