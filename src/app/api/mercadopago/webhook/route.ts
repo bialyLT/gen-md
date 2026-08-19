@@ -80,16 +80,25 @@ async function handlePreapproval(preapprovalId: string) {
   if (await alreadyProcessed(eventId)) return;
 
   const sub = await getSubscription(preapprovalId);
-  if (sub?.external_reference && (sub.status === "cancelled" || sub.status === "paused")) {
-    const userId = sub.external_reference;
-    await prisma.subscription.updateMany({
-      where: { userId },
-      data: { status: "CANCELED", plan: "FREE" },
-    });
-    await prisma.user.update({
-      where: { id: userId },
-      data: { plan: "FREE" },
-    });
+  if (sub?.status === "cancelled" || sub?.status === "paused") {
+    let userId = sub.external_reference ?? null;
+    if (!userId) {
+      const local = await prisma.subscription.findUnique({
+        where: { mpPreferenceId: preapprovalId },
+        select: { userId: true },
+      });
+      userId = local?.userId ?? null;
+    }
+    if (userId) {
+      await prisma.subscription.updateMany({
+        where: { userId },
+        data: { status: "CANCELED", plan: "FREE" },
+      });
+      await prisma.user.update({
+        where: { id: userId },
+        data: { plan: "FREE" },
+      });
+    }
   }
 
   await markProcessed(eventId);
