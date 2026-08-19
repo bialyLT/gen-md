@@ -108,20 +108,17 @@ export async function GET(request: Request) {
     );
   }
 
-  // La suscripción debe pertenecer al cliente que está confirmando. La
-  // asociamos con la local (mpPreferenceId = preapproval_id) creada en
-  // /checkout para el usuario que inició el pago. Si no existe local
-  // (links "sin integración"), validamos con external_reference de MP.
+  // La suscripción local (creada en /checkout por el flujo API) debe
+  // pertenecer al cliente que confirma. Si no existe una local, la
+  // preapproval la creó el link del plan ("sin integración") y MP no la
+  // vincula a un usuario (external_reference es una constante y no hay
+  // payer_email). En ese caso confiamos en la sesión: quien volvió con
+  // este preapproval_id en la URL es el cliente que acaba de pagar.
   const localSub = await prisma.subscription.findUnique({
     where: { mpPreferenceId: preapprovalId },
     select: { userId: true },
   });
-  const ownerId =
-    localSub?.userId ??
-    (typeof currentSub.external_reference === "string"
-      ? currentSub.external_reference
-      : null);
-  if (ownerId && ownerId !== auth.data.userId) {
+  if (localSub && localSub.userId !== auth.data.userId) {
     return NextResponse.json(
       { error: "Esta suscripción pertenece a otra cuenta." },
       { status: 403 }

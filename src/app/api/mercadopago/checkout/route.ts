@@ -63,6 +63,10 @@ export async function POST(request: NextRequest) {
       notificationUrl,
     }));
   } catch (err) {
+    console.error(
+      "createSubscription falló, cayendo al link del plan (sin integración):",
+      err
+    );
     // Si MP rechaza la creación por API (por ejemplo, algunos emails
     // de la propia cuenta de MP fallan), caemos al link del plan como
     // respaldo para no bloquear el pago.
