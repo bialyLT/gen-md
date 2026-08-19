@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { createSubscription, isMpConfigured } from "@/lib/mercadopago";
@@ -6,7 +6,7 @@ import { z } from "zod";
 
 const bodySchema = z.object({ planId: z.string().min(1) });
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const auth = await requireUser();
   if (!auth.ok) return auth.res;
 
@@ -50,9 +50,8 @@ export async function POST(request: Request) {
     );
   }
 
-  const appUrl = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/+$/, "");
-  const notificationUrl =
-    process.env.MP_WEBHOOK_URL ?? `${appUrl}/api/mercadopago/webhook`;
+  const appUrl = request.nextUrl.origin;
+  const notificationUrl = `${appUrl}/api/mercadopago/webhook`;
 
   let id: string;
   let initPoint: string | null;
