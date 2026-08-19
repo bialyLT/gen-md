@@ -1,13 +1,23 @@
 import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
-import { getSubscription, isMpConfigured } from "@/lib/mercadopago";
+import {
+  getPayment,
+  getSubscription,
+  isMpConfigured,
+} from "@/lib/mercadopago";
 
 export const maxDuration = 60;
 
 const PRO_PERIOD_DAYS = 30;
 
-async function activatePro(userId: string, preapprovalId: string) {
+const APPROVED_STATUSES = new Set(["approved", "authorized"]);
+
+async function activatePro(
+  userId: string,
+  preapprovalId: string,
+  paymentId?: string | null
+) {
   const now = new Date();
   const end = new Date(now.getTime() + PRO_PERIOD_DAYS * 24 * 60 * 60 * 1000);
   await prisma.subscription.upsert({
@@ -15,6 +25,7 @@ async function activatePro(userId: string, preapprovalId: string) {
     create: {
       userId,
       mpPreferenceId: preapprovalId,
+      mpPaymentId: paymentId ?? null,
       status: "ACTIVE",
       plan: "PRO",
       currentPeriodStart: now,
@@ -22,6 +33,7 @@ async function activatePro(userId: string, preapprovalId: string) {
     },
     update: {
       mpPreferenceId: preapprovalId,
+      mpPaymentId: paymentId ?? undefined,
       status: "ACTIVE",
       plan: "PRO",
       currentPeriodStart: now,
@@ -43,8 +55,29 @@ async function isAlreadyActive(userId: string): Promise<boolean> {
 }
 
 /**
+ * La suscripción local (creada en /checkout por el flujo API) debe
+ * pertenecer al cliente que confirma. Si no existe una local, la
+ * preapproval la creó el link del plan ("sin integración") y MP no la
+ * vincula a un usuario (external_reference es una constante y no hay
+ * payer_email). En ese caso confiamos en la sesión: quien volvió con
+ * este preapproval_id en la URL es el cliente que acaba de pagar.
+ */
+async function assertOwnership(userId: string, preapprovalId: string) {
+  const localSub = await prisma.subscription.findUnique({
+    where: { mpPreferenceId: preapprovalId },
+    select: { userId: true },
+  });
+  if (localSub && localSub.userId !== userId) {
+    return false;
+  }
+  return true;
+}
+
+/**
  * Activa PRO cuando el usuario vuelve del checkout de Mercado Pago.
- * El redirect de MP llega a /dashboard?checkout=success&preapproval_id=...
+ * MP redirige a /dashboard con los datos del pago como query params
+ * (preapproval_id, y opcionalmente status/collection_status/payment_id).
+ * Activa apenas el pago está aprobado, consultando MP de ser necesario.
  */
 export async function GET(request: Request) {
   const auth = await requireUser();
@@ -59,6 +92,9 @@ export async function GET(request: Request) {
 
   const { searchParams } = new URL(request.url);
   const preapprovalId = searchParams.get("preapproval_id");
+  const paymentId = searchParams.get("payment_id");
+  const statusParam =
+    searchParams.get("status") ?? searchParams.get("collection_status");
 
   if (!preapprovalId) {
     return NextResponse.json(
@@ -73,11 +109,38 @@ export async function GET(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
+  // El status viene en la URL de retorno. Si MP ya confirmó el pago,
+  // activamos directo sin esperar el polling de la preapproval.
+  if (statusParam && APPROVED_STATUSES.has(statusParam)) {
+    if (await assertOwnership(auth.data.userId, preapprovalId)) {
+      await activatePro(auth.data.userId, preapprovalId, paymentId);
+      return NextResponse.json({ ok: true });
+    }
+    return NextResponse.json(
+      { error: "Esta suscripción pertenece a otra cuenta." },
+      { status: 403 }
+    );
+  }
+
+  // Si vino un payment_id, verificamos el pago puntual en MP.
+  if (paymentId) {
+    const payment = await getPayment(paymentId);
+    if (payment?.status === "approved") {
+      if (await assertOwnership(auth.data.userId, preapprovalId)) {
+        await activatePro(auth.data.userId, preapprovalId, paymentId);
+        return NextResponse.json({ ok: true });
+      }
+      return NextResponse.json(
+        { error: "Esta suscripción pertenece a otra cuenta." },
+        { status: 403 }
+      );
+    }
+  }
+
+  // Sin datos de pago en la URL: consultamos la preapproval. "authorized":
+  // primer cobro aprobado. "pending": el cliente se adhirió pero el cobro
+  // inicial está pendiente de acreditarse. Reintentamos unos segundos.
   const sub = await getSubscription(preapprovalId);
-  // "authorized": primer cobro aprobado. "pending": el cliente ya se
-  // adhirió pero el cobro inicial está pendiente de acreditarse.
-  // Al volver del checkout el cobro puede tardar unos segundos en
-  // confirmarse, así que reintentamos antes de fallar.
   let currentSub = sub;
   let currentStatus = sub?.status;
   for (
@@ -100,6 +163,9 @@ export async function GET(request: Request) {
     if (await isAlreadyActive(auth.data.userId)) {
       return NextResponse.json({ ok: true });
     }
+    console.warn(
+      `[mercadopago/activate] pago no confirmado. preapproval=${preapprovalId} status=${currentStatus ?? "null"} params=${searchParams.toString()}`
+    );
     return NextResponse.json(
       {
         error: `El pago todavía no se confirma (estado en Mercado Pago: ${currentStatus ?? "desconocido"}). Si ya pagaste, tu plan se activa automáticamente en unos minutos.`,
@@ -108,23 +174,13 @@ export async function GET(request: Request) {
     );
   }
 
-  // La suscripción local (creada en /checkout por el flujo API) debe
-  // pertenecer al cliente que confirma. Si no existe una local, la
-  // preapproval la creó el link del plan ("sin integración") y MP no la
-  // vincula a un usuario (external_reference es una constante y no hay
-  // payer_email). En ese caso confiamos en la sesión: quien volvió con
-  // este preapproval_id en la URL es el cliente que acaba de pagar.
-  const localSub = await prisma.subscription.findUnique({
-    where: { mpPreferenceId: preapprovalId },
-    select: { userId: true },
-  });
-  if (localSub && localSub.userId !== auth.data.userId) {
+  if (!(await assertOwnership(auth.data.userId, preapprovalId))) {
     return NextResponse.json(
       { error: "Esta suscripción pertenece a otra cuenta." },
       { status: 403 }
     );
   }
 
-  await activatePro(auth.data.userId, preapprovalId);
+  await activatePro(auth.data.userId, preapprovalId, paymentId);
   return NextResponse.json({ ok: true });
 }
