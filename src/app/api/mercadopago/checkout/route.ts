@@ -23,14 +23,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Plan no disponible" }, { status: 404 });
   }
 
-  // Opción "sin integración": plan creado en el panel de Mercado Pago.
-  // Redirigimos al link de checkout; la activación ocurre al volver con
-  // ?checkout=success&preapproval_id=... (ver /api/mercadopago/activate).
-  if (plan.mpPlanInitPoint) {
-    return NextResponse.json({ url: plan.mpPlanInitPoint });
-  }
-
+  // Si no hay token de MP, solo podemos redirigir al link del plan
+  // (opción "sin integración").
   if (!isMpConfigured()) {
+    if (plan.mpPlanInitPoint) {
+      return NextResponse.json({ url: plan.mpPlanInitPoint });
+    }
     return NextResponse.json(
       { error: "Mercado Pago no está configurado en el servidor" },
       { status: 503 }
@@ -64,6 +62,12 @@ export async function POST(request: NextRequest) {
       notificationUrl,
     }));
   } catch (err) {
+    // Si MP rechaza la creación por API (por ejemplo, algunos emails
+    // de la propia cuenta de MP fallan), caemos al link del plan como
+    // respaldo para no bloquear el pago.
+    if (plan.mpPlanInitPoint) {
+      return NextResponse.json({ url: plan.mpPlanInitPoint });
+    }
     const message = err instanceof Error ? err.message : "Error desconocido";
     const isConfig = message.includes("resource not found");
     return NextResponse.json(
