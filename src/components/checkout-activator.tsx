@@ -10,6 +10,7 @@ function ActivatorInner() {
   const [state, setState] = useState<"idle" | "loading" | "ok" | "error">(
     "idle"
   );
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const preapprovalId = params.get("preapproval_id");
@@ -27,6 +28,11 @@ function ActivatorInner() {
           `/api/mercadopago/activate?preapproval_id=${encodeURIComponent(id)}`
         );
         if (!res.ok) {
+          const data = await res.json().catch(() => null);
+          setError(
+            data?.error ??
+              "No pudimos activar tu suscripción. Si el pago se acreditó, escribinos y lo activamos."
+          );
           setState("error");
           return;
         }
@@ -56,8 +62,7 @@ function ActivatorInner() {
   if (state === "error") {
     return (
       <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
-        No pudimos activar tu suscripción. Si el pago se acreditó, escribinos y
-        lo activamos.
+        {error ?? "No pudimos activar tu suscripción."}
       </div>
     );
   }
@@ -65,7 +70,7 @@ function ActivatorInner() {
   if (state === "loading") {
     return (
       <div className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-        Confirmando tu pago...
+        Confirmando tu pago, puede tardar unos segundos...
       </div>
     );
   }

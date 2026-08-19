@@ -8,6 +8,18 @@ import {
 
 const PRO_PERIOD_DAYS = 30;
 
+/** Estados finales de un pago. Si está pending/in_process NO se marca como
+ * procesado, así MP vuelve a notificar y el cobro aprobado se acredita igual. */
+const TERMINAL_PAYMENT_STATUSES = new Set([
+  "approved",
+  "authorized",
+  "rejected",
+  "cancelled",
+  "refunded",
+  "charged_back",
+  "in_mediation",
+]);
+
 async function alreadyProcessed(eventId: string): Promise<boolean> {
   const existing = await prisma.webhookEvent.findUnique({ where: { eventId } });
   return Boolean(existing);
@@ -49,10 +61,7 @@ async function handlePayment(paymentId: string) {
   if (await alreadyProcessed(eventId)) return;
 
   const payment = await getPayment(paymentId);
-  if (!payment) {
-    await markProcessed(eventId);
-    return;
-  }
+  if (!payment) return;
 
   let userId = payment.external_reference ?? null;
   if (!userId && payment.preapproval_id) {
@@ -71,24 +80,35 @@ async function handlePayment(paymentId: string) {
     await activatePro(userId, String(payment.id), payment.date_approved);
   }
 
-  await markProcessed(eventId);
+  // Solo marcamos como procesado cuando el pago llegó a un estado final.
+  // Antes se marcaba siempre: si MP notificaba primero un pago en proceso,
+  // la notificación del cobro aprobado se descartaba y el usuario nunca se
+  // activaba (pago acreditado pero plan sin dar de alta).
+  if (TERMINAL_PAYMENT_STATUSES.has(payment.status)) {
+    await markProcessed(eventId);
+  }
 }
 
 /** Cambio de estado de la suscripción (topic=preapproval). */
 async function handlePreapproval(preapprovalId: string) {
-  const eventId = `mp-preapproval-${preapprovalId}`;
+  const sub = await getSubscription(preapprovalId);
+  if (!sub) return;
+
+  // El eventId incluye el estado para no perder eventos futuros (ej. una
+  // cancelación posterior a una autorización) por idempotencia.
+  const eventId = `mp-preapproval-${preapprovalId}-${sub.status}`;
   if (await alreadyProcessed(eventId)) return;
 
-  const sub = await getSubscription(preapprovalId);
-  if (sub?.status === "cancelled" || sub?.status === "paused") {
-    let userId = sub.external_reference ?? null;
-    if (!userId) {
-      const local = await prisma.subscription.findUnique({
-        where: { mpPreferenceId: preapprovalId },
-        select: { userId: true },
-      });
-      userId = local?.userId ?? null;
-    }
+  let userId = sub.external_reference ?? null;
+  if (!userId) {
+    const local = await prisma.subscription.findUnique({
+      where: { mpPreferenceId: preapprovalId },
+      select: { userId: true },
+    });
+    userId = local?.userId ?? null;
+  }
+
+  if (sub.status === "cancelled" || sub.status === "paused") {
     if (userId) {
       await prisma.subscription.updateMany({
         where: { userId },
@@ -99,9 +119,15 @@ async function handlePreapproval(preapprovalId: string) {
         data: { plan: "FREE" },
       });
     }
+    await markProcessed(eventId);
+  } else if (sub.status === "authorized") {
+    // Respaldo: si el webhook del pago no llegó o se demoró, activamos igual.
+    if (userId) {
+      await activatePro(userId, preapprovalId, undefined);
+    }
+    await markProcessed(eventId);
   }
-
-  await markProcessed(eventId);
+  // "pending": no marcamos como procesado, esperamos el próximo evento.
 }
 
 /**
