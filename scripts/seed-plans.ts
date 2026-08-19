@@ -15,7 +15,7 @@ async function main() {
           name: "Pro",
           description:
             "Acceso ilimitado a generación de material didáctico, imágenes y chat.",
-          priceArs: Number(process.env.MP_PRICE_ARS ?? 15000),
+          priceArs: 15000,
           frequency: 1,
           sortOrder: 0,
         },

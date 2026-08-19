@@ -29,21 +29,6 @@ export function isMpConfigured(): boolean {
 }
 
 /**
- * Link de checkout del plan creado manualmente en el panel de Mercado Pago
- * (opción "sin integración"). Si está configurado, "Mejorar plan" redirige
- * directo a ese link en vez de crear la suscripción por API.
- */
-export function mpPlanInitPoint(): string | null {
-  return process.env.MP_PLAN_INIT_POINT ?? null;
-}
-
-/** Precio mensual del plan Pro en pesos argentinos. */
-export function mpPriceArs(): number {
-  const value = Number(process.env.MP_PRICE_ARS);
-  return Number.isFinite(value) && value > 0 ? Math.round(value) : 15000;
-}
-
-/**
  * Crea una suscripción (preapproval) de Mercado Pago y devuelve la URL
  * donde el usuario autoriza el cobro mensual con su tarjeta.
  */

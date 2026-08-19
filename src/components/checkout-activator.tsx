@@ -3,6 +3,9 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useRef, useState } from "react";
 
+const MAX_ATTEMPTS = 4;
+const RETRY_DELAY_MS = 8000;
+
 function ActivatorInner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -10,6 +13,7 @@ function ActivatorInner() {
   const [state, setState] = useState<"idle" | "loading" | "ok" | "error">(
     "idle"
   );
+  const [showOverlay, setShowOverlay] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -20,15 +24,34 @@ function ActivatorInner() {
     const id: string = preapprovalId;
 
     async function run() {
-      if (checkout === "success") {
-        setState("loading");
-      }
-      try {
-        const res = await fetch(
-          `/api/mercadopago/activate?preapproval_id=${encodeURIComponent(id)}`
-        );
-        if (!res.ok) {
-          const data = await res.json().catch(() => null);
+      const overlay = checkout === "success";
+      setShowOverlay(overlay);
+      if (overlay) setState("loading");
+
+      for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+        if (attempt > 0) {
+          await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
+        }
+
+        let res: Response;
+        try {
+          res = await fetch(
+            `/api/mercadopago/activate?preapproval_id=${encodeURIComponent(id)}`
+          );
+        } catch {
+          // Error de red transitorio: reintentamos.
+          continue;
+        }
+
+        if (res.ok) {
+          setState("ok");
+          router.refresh();
+          return;
+        }
+
+        const data = await res.json().catch(() => null);
+        // Errores definitivos: no tiene sentido reintentar.
+        if (res.status === 401 || res.status === 403 || res.status === 503) {
           setError(
             data?.error ??
               "No pudimos activar tu suscripción. Si el pago se acreditó, escribinos y lo activamos."
@@ -36,27 +59,89 @@ function ActivatorInner() {
           setState("error");
           return;
         }
-        setState("ok");
-        router.refresh();
-        if (checkout === "success") {
-          const url = new URL(window.location.href);
-          url.searchParams.delete("preapproval_id");
-          url.searchParams.delete("checkout");
-          window.history.replaceState({}, "", url.toString());
-        }
-      } catch {
-        setState("error");
       }
+
+      // Se agotaron los reintentos: el pago se confirma en unos minutos
+      // por webhook y la activación es automática.
+      setError(
+        "El pago todavía no se confirma. Si ya pagaste, tu plan se activa automáticamente en unos minutos."
+      );
+      setState("error");
     }
     void run();
   }, [params, router]);
 
-  if (state === "ok") {
+  function cleanUrl() {
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("preapproval_id");
+    url.searchParams.delete("checkout");
+    window.history.replaceState({}, "", url.toString());
+  }
+
+  function handleContinue() {
+    cleanUrl();
+    setState("idle");
+    router.refresh();
+  }
+
+  if (state === "loading" && showOverlay) {
     return (
-      <div className="mb-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950 dark:text-emerald-200">
-        Pago confirmado. Tu plan Pro está activo.
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/70 p-4 backdrop-blur-sm">
+        <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-900 dark:border-zinc-800 dark:border-t-white" />
+          <div>
+            <p className="text-lg font-semibold">Procesando pago</p>
+            <p className="mt-1 text-sm text-zinc-500">
+              Confirmando tu pago con Mercado Pago. No cierres esta página.
+            </p>
+          </div>
+        </div>
       </div>
     );
+  }
+
+  if (state === "ok" && showOverlay) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/70 p-4 backdrop-blur-sm">
+        <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-emerald-200 bg-white p-8 text-center shadow-xl dark:border-emerald-900 dark:bg-zinc-950">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="currentColor"
+              className="h-7 w-7"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4.5 12.75l6 6 9-13.5"
+              />
+            </svg>
+          </div>
+          <div>
+            <p className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">
+              Pago exitoso
+            </p>
+            <p className="mt-1 text-sm text-zinc-500">
+              Tu pago fue acreditado y tu plan Pro ya está activo.
+            </p>
+          </div>
+          <button
+            onClick={handleContinue}
+            className="mt-2 w-full rounded-lg bg-emerald-600 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-500"
+          >
+            Continuar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (state === "ok" && !showOverlay) {
+    return null;
   }
 
   if (state === "error") {

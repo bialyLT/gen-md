@@ -109,6 +109,20 @@ export async function GET(request: Request) {
     );
   }
 
+  // La preapproval se creó con external_reference = userId. Si tiene un
+  // dueño distinto al cliente que está confirmando, la rechazamos para
+  // no acreditar el plan a otra cuenta. (Los links "sin integración" no
+  // setean external_reference, así que se permiten.)
+  if (
+    currentSub.external_reference &&
+    currentSub.external_reference !== auth.data.userId
+  ) {
+    return NextResponse.json(
+      { error: "Esta suscripción pertenece a otra cuenta." },
+      { status: 403 }
+    );
+  }
+
   await activatePro(auth.data.userId, preapprovalId);
   return NextResponse.json({ ok: true });
 }
