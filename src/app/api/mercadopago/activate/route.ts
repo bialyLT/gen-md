@@ -102,21 +102,26 @@ export async function GET(request: Request) {
     }
     return NextResponse.json(
       {
-        error:
-          "El pago todavía no se confirma. Si ya pagaste, tu plan se activa automáticamente en unos minutos.",
+        error: `El pago todavía no se confirma (estado en Mercado Pago: ${currentStatus ?? "desconocido"}). Si ya pagaste, tu plan se activa automáticamente en unos minutos.`,
       },
       { status: 400 }
     );
   }
 
-  // La preapproval se creó con external_reference = userId. Si tiene un
-  // dueño distinto al cliente que está confirmando, la rechazamos para
-  // no acreditar el plan a otra cuenta. (Los links "sin integración" no
-  // setean external_reference, así que se permiten.)
-  if (
-    currentSub.external_reference &&
-    currentSub.external_reference !== auth.data.userId
-  ) {
+  // La suscripción debe pertenecer al cliente que está confirmando. La
+  // asociamos con la local (mpPreferenceId = preapproval_id) creada en
+  // /checkout para el usuario que inició el pago. Si no existe local
+  // (links "sin integración"), validamos con external_reference de MP.
+  const localSub = await prisma.subscription.findUnique({
+    where: { mpPreferenceId: preapprovalId },
+    select: { userId: true },
+  });
+  const ownerId =
+    localSub?.userId ??
+    (typeof currentSub.external_reference === "string"
+      ? currentSub.external_reference
+      : null);
+  if (ownerId && ownerId !== auth.data.userId) {
     return NextResponse.json(
       { error: "Esta suscripción pertenece a otra cuenta." },
       { status: 403 }

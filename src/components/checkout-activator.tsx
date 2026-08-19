@@ -6,6 +6,13 @@ import { Suspense, useEffect, useRef, useState } from "react";
 const MAX_ATTEMPTS = 4;
 const RETRY_DELAY_MS = 8000;
 
+const FAILED_STATUSES = new Set([
+  "rejected",
+  "cancelled",
+  "refunded",
+  "charged_back",
+]);
+
 function ActivatorInner() {
   const router = useRouter();
   const params = useSearchParams();
@@ -18,15 +25,24 @@ function ActivatorInner() {
 
   useEffect(() => {
     const preapprovalId = params.get("preapproval_id");
-    const checkout = params.get("checkout");
     if (ran.current || !preapprovalId) return;
     ran.current = true;
     const id: string = preapprovalId;
 
     async function run() {
-      const overlay = checkout === "success";
-      setShowOverlay(overlay);
-      if (overlay) setState("loading");
+      // Mercado Pago redirige de vuelta con ?preapproval_id=... (no manda
+      // checkout=success). Si volvimos con preapproval_id venimos del
+      // checkout de suscripción: mostramos el loading.
+      setShowOverlay(true);
+
+      const status = params.get("collection_status") ?? params.get("status");
+      if (status && FAILED_STATUSES.has(status)) {
+        setError("El pago no se pudo completar. Intentalo de nuevo.");
+        setState("error");
+        return;
+      }
+
+      setState("loading");
 
       for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
         if (attempt > 0) {
@@ -148,14 +164,6 @@ function ActivatorInner() {
     return (
       <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
         {error ?? "No pudimos activar tu suscripción."}
-      </div>
-    );
-  }
-
-  if (state === "loading") {
-    return (
-      <div className="mb-4 rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm text-zinc-600 dark:border-zinc-800 dark:bg-zinc-900 dark:text-zinc-300">
-        Confirmando tu pago, puede tardar unos segundos...
       </div>
     );
   }
