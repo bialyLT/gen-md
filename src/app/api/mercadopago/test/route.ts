@@ -5,16 +5,14 @@ export const dynamic = "force-dynamic";
 
 /**
  * Diagnóstico de la conexión con Mercado Pago desde el entorno de
- * producción. Requiere sesión ADMIN. Devuelve si el token existe, su
- * tipo (TEST/APP_USR), si es válido consultando /users/me, y (opcional)
- * si puede leer la preapproval indicada en ?preapproval_id=.
+ * producción. Requiere sesión (cualquier usuario autenticado). Devuelve
+ * si el token existe, su tipo (TEST/APP_USR), si es válido consultando
+ * /users/me, y (opcional) si puede leer la preapproval indicada en
+ * ?preapproval_id=.
  */
 export async function GET(request: Request) {
   const auth = await requireUser();
   if (!auth.ok) return auth.res;
-  if (auth.data.session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-  }
 
   const token = process.env.MP_ACCESS_TOKEN;
 
