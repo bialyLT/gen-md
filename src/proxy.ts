@@ -16,13 +16,18 @@ export async function proxy(request: NextRequest) {
   }
 
   const authUrl = process.env.AUTH_URL;
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-    secureCookie: authUrl
-      ? authUrl.startsWith("https://")
-      : request.nextUrl.protocol === "https:",
-  });
+  const secret = process.env.AUTH_SECRET;
+  const secureCookie = authUrl
+    ? authUrl.startsWith("https://")
+    : request.nextUrl.protocol === "https:";
+  let token = await getToken({ req: request, secret, secureCookie });
+  if (!token) {
+    token = await getToken({
+      req: request,
+      secret,
+      secureCookie: !secureCookie,
+    });
+  }
 
   if (!token) {
     const loginUrl = new URL("/login", request.url);

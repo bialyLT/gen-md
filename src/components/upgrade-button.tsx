@@ -1,45 +1,12 @@
-"use client";
+import Link from "next/link";
 
-import { useState } from "react";
-
-export function UpgradeButton({ planId }: { planId: string }) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function upgrade() {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/mercadopago/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId }),
-      });
-      const data = await res.json();
-      if (!res.ok) {
-        setError(data.error ?? "No se pudo iniciar el pago");
-        return;
-      }
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch {
-      setError("No se pudo iniciar el pago");
-    } finally {
-      setLoading(false);
-    }
-  }
-
+export function UpgradeButton() {
   return (
-    <div>
-      <button
-        onClick={upgrade}
-        disabled={loading}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-40"
-      >
-        {loading ? "Redirigiendo..." : "Mejorar plan"}
-      </button>
-      {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-    </div>
+    <Link
+      href="/planes"
+      className="inline-block rounded-lg bg-emerald-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:bg-emerald-700"
+    >
+      Mejorar plan
+    </Link>
   );
 }

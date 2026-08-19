@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { requireUser } from "@/lib/api-auth";
 import { prisma } from "@/lib/prisma";
 import { createSubscription, isMpConfigured } from "@/lib/mercadopago";
+import { appBaseUrl } from "@/lib/url";
 import { z } from "zod";
 
 const bodySchema = z.object({ planId: z.string().min(1) });
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const appUrl = request.nextUrl.origin;
+  const appUrl = appBaseUrl(request);
   const notificationUrl = `${appUrl}/api/mercadopago/webhook`;
 
   let id: string;
