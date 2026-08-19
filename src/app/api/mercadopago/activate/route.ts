@@ -35,7 +35,20 @@ export async function GET(request: Request) {
   const status = sub?.status;
   // "authorized": primer cobro aprobado. "pending": el cliente ya se
   // adhirió pero el cobro inicial está pendiente de acreditarse.
-  if (!sub || (status !== "authorized" && status !== "pending")) {
+  // Al volver del checkout el cobro puede tardar unos segundos en
+  // confirmarse, así que reintentamos antes de fallar.
+  let currentSub = sub;
+  let currentStatus = status;
+  for (let i = 0; i < 5 && (!currentSub || (currentStatus !== "authorized" && currentStatus !== "pending")); i++) {
+    await new Promise((r) => setTimeout(r, 4000));
+    currentSub = await getSubscription(preapprovalId);
+    currentStatus = currentSub?.status;
+  }
+
+  if (
+    !currentSub ||
+    (currentStatus !== "authorized" && currentStatus !== "pending")
+  ) {
     return NextResponse.json(
       { error: "La suscripción no está activa" },
       { status: 400 }
