@@ -23,13 +23,13 @@ export default async function AdminPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-semibold">Panel de administración</h1>
+      <h1 className="mb-6 text-xl font-semibold sm:text-2xl">Panel de administración</h1>
 
-      <div className="mb-8 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+            className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-950"
           >
             <p className="text-xs text-zinc-400">{s.label}</p>
             <p className="mt-1 text-2xl font-semibold">{s.value}</p>

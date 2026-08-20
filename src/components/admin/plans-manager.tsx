@@ -141,8 +141,8 @@ export function PlansManager() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Planes de suscripción</h1>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-xl font-semibold sm:text-2xl">Planes de suscripción</h1>
         {!form && (
           <button
             onClick={startNew}
@@ -264,8 +264,8 @@ export function PlansManager() {
         </form>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-        <table className="w-full text-left text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+        <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
             <tr className="border-b border-zinc-200 text-xs text-zinc-400 dark:border-zinc-800">
               <th className="px-4 py-3 font-medium">Nombre</th>

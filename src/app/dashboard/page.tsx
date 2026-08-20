@@ -58,12 +58,12 @@ export default async function DashboardPage() {
         </div>
       </aside>
 
-      <main className="flex-1 p-6">
+      <main className="flex-1 p-4 sm:p-6">
         <CheckoutActivator />
-        <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold">Panel</h1>
-            <p className="text-sm text-zinc-500">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <h1 className="text-xl font-semibold sm:text-2xl">Panel</h1>
+            <p className="truncate text-sm text-zinc-500">
               Plan {plan === "PRO" ? "Pro" : "Gratis"} ·{" "}
               {session.user.email}
             </p>

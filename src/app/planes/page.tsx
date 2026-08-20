@@ -17,16 +17,18 @@ export default async function PlanesPage() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col bg-zinc-50 p-6 dark:bg-black">
-      <header className="mb-8 flex items-center justify-between">
-        <div>
+    <main className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-6 dark:bg-black">
+      <header className="mb-6 flex items-start justify-between gap-3 sm:mb-8 sm:items-center">
+        <div className="min-w-0">
           <Link
             href="/dashboard"
             className="text-sm text-zinc-500 transition hover:text-zinc-700 dark:hover:text-zinc-300"
           >
             ← Volver al panel
           </Link>
-          <h1 className="mt-1 text-2xl font-semibold">Elegí tu plan</h1>
+          <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
+            Elegí tu plan
+          </h1>
           <p className="text-sm text-zinc-500">
             Pagás de forma segura con Mercado Pago.
           </p>
@@ -43,10 +45,10 @@ export default async function PlanesPage() {
           {plans.map((p) => (
             <div
               key={p.id}
-              className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+              className="flex flex-col rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-950"
             >
               <p className="font-medium">{p.name}</p>
-              <p className="mt-1 text-3xl font-semibold">
+              <p className="mt-1 text-2xl font-semibold sm:text-3xl">
                 ${p.priceArs.toLocaleString("es-AR")}
                 <span className="text-sm font-normal text-zinc-400">
                   {" "}

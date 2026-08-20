@@ -23,12 +23,12 @@ export default async function ChatPage({
 
   return (
     <div className="flex h-full flex-1 flex-col">
-      <header className="flex items-center justify-between border-b border-zinc-200 px-4 py-3 dark:border-zinc-800">
+      <header className="flex items-center justify-between border-b border-zinc-200 px-3 py-2.5 sm:px-4 sm:py-3 dark:border-zinc-800">
         <Link href="/dashboard" className="text-sm text-zinc-500 hover:underline">
           ← Panel
         </Link>
-        <h1 className="truncate px-4 font-medium">{chat.title}</h1>
-        <DeleteChatButton chatId={chat.id} inChat />
+        <h1 className="truncate px-2 font-medium sm:px-4">{chat.title}</h1>
+        <DeleteChatButton chatId={chat.id} inChat compact />
       </header>
       <ChatClient
         chatId={chat.id}

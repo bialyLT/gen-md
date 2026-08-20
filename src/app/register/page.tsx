@@ -34,8 +34,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-6 dark:bg-black">
-      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-8 dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
+      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 dark:border-zinc-800 dark:bg-zinc-950">
         <h1 className="mb-6 text-2xl font-semibold">Crear cuenta</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input

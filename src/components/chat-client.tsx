@@ -93,7 +93,7 @@ function cleanPart(text: string): string {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="flex-1 space-y-4 overflow-y-auto px-4 py-6">
+      <div className="flex-1 space-y-4 overflow-y-auto px-3 py-4 sm:px-4 sm:py-6">
         {messages.length === 0 && (
           <div className="flex h-full items-center justify-center text-sm text-zinc-400">
             Contame qué material didáctico necesitás para tus alumnos.
@@ -105,7 +105,7 @@ function cleanPart(text: string): string {
             className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
           >
             <div
-              className={`max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-3 text-sm ${
+              className={`max-w-[92%] whitespace-pre-wrap rounded-2xl px-3.5 py-2.5 text-sm sm:max-w-[80%] sm:px-4 sm:py-3 ${
                 message.role === "user"
                   ? "bg-zinc-900 text-white dark:bg-white dark:text-black"
                   : "bg-zinc-100 dark:bg-zinc-900"
@@ -208,19 +208,19 @@ function cleanPart(text: string): string {
           sendMessage({ text: input });
           setInput("");
         }}
-        className="border-t border-zinc-200 p-4 dark:border-zinc-800"
+        className="border-t border-zinc-200 p-3 sm:p-4 dark:border-zinc-800"
       >
-        <div className="flex gap-3">
+        <div className="flex gap-2 sm:gap-3">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Escribí tu pedido de material didáctico..."
-            className="flex-1 rounded-full border border-zinc-300 px-4 py-2.5 text-sm outline-none focus:border-zinc-500 dark:border-zinc-700 dark:bg-zinc-900"
+            className="flex-1 rounded-full border border-zinc-300 px-4 py-2 text-sm outline-none focus:border-zinc-500 sm:py-2.5 dark:border-zinc-700 dark:bg-zinc-900"
           />
           <button
             type="submit"
             disabled={isLoading || !input.trim()}
-            className="rounded-full bg-zinc-900 px-6 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-40 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+            className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-40 sm:px-6 sm:py-2.5 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
           >
             {isLoading ? "..." : "Enviar"}
           </button>
