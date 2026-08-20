@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { BackButton } from "@/components/back-button";
 
 export default async function AdminPage() {
   const [totalUsers, proUsers, plans, subscriptions, recentUsers] =
@@ -23,6 +24,9 @@ export default async function AdminPage() {
 
   return (
     <div>
+      <div className="mb-4">
+        <BackButton href="/dashboard" label="Volver al panel" />
+      </div>
       <h1 className="mb-6 text-xl font-semibold sm:text-2xl">Panel de administración</h1>
 
       <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">

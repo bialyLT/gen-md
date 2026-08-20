@@ -8,6 +8,7 @@ import { LogoutButton } from "@/components/logout-button";
 import { DeleteChatButton } from "@/components/delete-chat-button";
 import { UpgradeButton } from "@/components/upgrade-button";
 import { CheckoutActivator } from "@/components/checkout-activator";
+import { BackButton } from "@/components/back-button";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -59,6 +60,9 @@ export default async function DashboardPage() {
       </aside>
 
       <main className="flex-1 p-4 sm:p-6">
+        <div className="mb-4 md:hidden">
+          <BackButton href="/" label="Volver al inicio" />
+        </div>
         <CheckoutActivator />
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">

@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PlanCheckoutButton } from "@/components/plan-checkout-button";
 import { LogoutButton } from "@/components/logout-button";
+import { BackButton } from "@/components/back-button";
 
 export const dynamic = "force-dynamic";
 
@@ -20,12 +20,7 @@ export default async function PlanesPage() {
     <main className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-6 dark:bg-black">
       <header className="mb-6 flex items-start justify-between gap-3 sm:mb-8 sm:items-center">
         <div className="min-w-0">
-          <Link
-            href="/dashboard"
-            className="text-sm text-zinc-500 transition hover:text-zinc-700 dark:hover:text-zinc-300"
-          >
-            ← Volver al panel
-          </Link>
+          <BackButton href="/dashboard" label="Volver al panel" />
           <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
             Elegí tu plan
           </h1>
