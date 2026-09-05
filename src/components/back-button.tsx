@@ -24,7 +24,7 @@ export function BackButton({ href = "/", label = "Volver" }: Props) {
     <button
       type="button"
       onClick={handleClick}
-      className="text-sm text-zinc-500 transition hover:text-zinc-700 dark:hover:text-zinc-300"
+      className="text-sm text-sky-700 transition hover:text-sky-500"
     >
       ← {label}
     </button>

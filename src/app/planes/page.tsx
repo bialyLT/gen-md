@@ -17,14 +17,14 @@ export default async function PlanesPage() {
   });
 
   return (
-    <main className="flex min-h-screen flex-col bg-zinc-50 p-4 sm:p-6 dark:bg-black">
+    <main className="flex min-h-screen flex-col bg-sky-50/60 p-4 sm:p-6">
       <header className="mb-6 flex items-start justify-between gap-3 sm:mb-8 sm:items-center">
         <div className="min-w-0">
           <BackButton href="/dashboard" label="Volver al panel" />
           <h1 className="mt-1 text-xl font-semibold sm:text-2xl">
             Elegí tu plan
           </h1>
-          <p className="text-sm text-zinc-500">
+          <p className="text-sm text-slate-500">
             Pagás de forma segura con Mercado Pago.
           </p>
         </div>
@@ -32,7 +32,7 @@ export default async function PlanesPage() {
       </header>
 
       {plans.length === 0 ? (
-        <p className="text-sm text-zinc-500">
+        <p className="text-sm text-slate-500">
           Todavía no hay planes disponibles.
         </p>
       ) : (
@@ -40,18 +40,18 @@ export default async function PlanesPage() {
           {plans.map((p) => (
             <div
               key={p.id}
-              className="flex flex-col rounded-xl border border-zinc-200 bg-white p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+              className="flex flex-col rounded-xl border border-sky-100 bg-white p-4 shadow-sm sm:p-5"
             >
-              <p className="font-medium">{p.name}</p>
-              <p className="mt-1 text-2xl font-semibold sm:text-3xl">
+              <p className="font-medium text-slate-900">{p.name}</p>
+              <p className="mt-1 text-2xl font-semibold text-slate-900 sm:text-3xl">
                 ${p.priceArs.toLocaleString("es-AR")}
-                <span className="text-sm font-normal text-zinc-400">
+                <span className="text-sm font-normal text-slate-400">
                   {" "}
                   / {p.frequency} mes(es)
                 </span>
               </p>
               {p.description && (
-                <p className="mt-2 flex-1 text-sm text-zinc-500">
+                <p className="mt-2 flex-1 text-sm text-slate-500">
                   {p.description}
                 </p>
               )}

@@ -12,27 +12,27 @@ export default async function AdminLayout({
   if (session.user.role !== "ADMIN") redirect("/dashboard");
 
   return (
-    <div className="flex flex-1 bg-zinc-50 dark:bg-black">
-      <aside className="hidden w-64 flex-col border-r border-zinc-200 p-4 dark:border-zinc-800 md:flex">
+    <div className="flex flex-1 bg-sky-50/60">
+      <aside className="hidden w-64 flex-col border-r border-sky-100 bg-white p-4 md:flex">
         <Link href="/" className="mb-6 text-lg font-semibold">
           Material Didáctico
         </Link>
         <nav className="flex flex-col gap-1 text-sm">
           <Link
             href="/admin"
-            className="rounded-lg px-3 py-2 text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-sky-100"
           >
             Panel
           </Link>
           <Link
             href="/admin/plans"
-            className="rounded-lg px-3 py-2 text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-sky-100"
           >
             Planes
           </Link>
           <Link
             href="/dashboard"
-            className="rounded-lg px-3 py-2 text-zinc-700 transition hover:bg-zinc-100 dark:text-zinc-300 dark:hover:bg-zinc-900"
+            className="rounded-lg px-3 py-2 text-slate-600 transition hover:bg-sky-100"
           >
             Volver al panel de usuario
           </Link>

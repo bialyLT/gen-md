@@ -103,12 +103,12 @@ function ActivatorInner() {
 
   if (state === "loading" && showOverlay) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/70 p-4 backdrop-blur-sm">
-        <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-zinc-200 bg-white p-8 text-center shadow-xl dark:border-zinc-800 dark:bg-zinc-950">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-zinc-200 border-t-zinc-900 dark:border-zinc-800 dark:border-t-white" />
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+        <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-sky-100 bg-white p-8 text-center shadow-xl">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-sky-100 border-t-sky-600" />
           <div>
             <p className="text-lg font-semibold">Procesando pago</p>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-slate-500">
               Confirmando tu pago con Mercado Pago. No cierres esta página.
             </p>
           </div>
@@ -119,9 +119,9 @@ function ActivatorInner() {
 
   if (state === "ok" && showOverlay) {
     return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-zinc-950/70 p-4 backdrop-blur-sm">
-        <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-emerald-200 bg-white p-8 text-center shadow-xl dark:border-emerald-900 dark:bg-zinc-950">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200">
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-sm">
+        <div className="flex w-full max-w-sm flex-col items-center gap-4 rounded-2xl border border-emerald-200 bg-white p-8 text-center shadow-xl">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -138,10 +138,10 @@ function ActivatorInner() {
             </svg>
           </div>
           <div>
-            <p className="text-lg font-semibold text-emerald-700 dark:text-emerald-300">
+            <p className="text-lg font-semibold text-emerald-700">
               Pago exitoso
             </p>
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-sm text-slate-500">
               Tu pago fue acreditado y tu plan Pro ya está activo.
             </p>
           </div>
@@ -162,7 +162,7 @@ function ActivatorInner() {
 
   if (state === "error") {
     return (
-      <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+      <div className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
         {error ?? "No pudimos activar tu suscripción."}
       </div>
     );

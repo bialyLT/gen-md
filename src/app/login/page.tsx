@@ -36,8 +36,8 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex flex-1 items-center justify-center bg-zinc-50 px-4 dark:bg-black">
-      <div className="w-full max-w-sm rounded-2xl border border-zinc-200 bg-white p-6 sm:p-8 dark:border-zinc-800 dark:bg-zinc-950">
+    <div className="flex flex-1 items-center justify-center bg-gradient-to-b from-sky-100 via-white to-amber-50 px-4">
+      <div className="w-full max-w-sm rounded-2xl border border-sky-100 bg-white p-6 shadow-sm sm:p-8">
         <div className="mb-4">
           <BackButton href="/" />
         </div>
@@ -49,7 +49,7 @@ function LoginForm() {
             placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
           />
           <input
             type="password"
@@ -57,13 +57,13 @@ function LoginForm() {
             placeholder="Contraseña"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+            className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
           />
           {error && <p className="text-sm text-red-600">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="rounded-lg bg-zinc-900 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-white dark:text-black"
+            className="rounded-lg bg-sky-600 py-2.5 text-sm font-medium text-white transition hover:bg-sky-500 disabled:opacity-50"
           >
             {loading ? "Ingresando..." : "Ingresar"}
           </button>
@@ -71,14 +71,14 @@ function LoginForm() {
         {process.env.NEXT_PUBLIC_ENABLE_GOOGLE === "true" && (
           <button
             onClick={() => signIn("google", { callbackUrl })}
-            className="mt-3 w-full rounded-lg border border-zinc-300 py-2.5 text-sm font-medium transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+            className="mt-3 w-full rounded-lg border border-sky-200 bg-white py-2.5 text-sm font-medium text-sky-700 transition hover:bg-sky-50"
           >
             Continuar con Google
           </button>
         )}
-        <p className="mt-6 text-center text-sm text-zinc-500">
+        <p className="mt-6 text-center text-sm text-slate-500">
           ¿No tenés cuenta?{" "}
-          <a href="/register" className="text-zinc-900 underline dark:text-zinc-100">
+          <a href="/register" className="text-sky-700 underline">
             Registrate
           </a>
         </p>

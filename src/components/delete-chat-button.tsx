@@ -39,7 +39,7 @@ export function DeleteChatButton({ chatId, inChat = false, compact = false }: Pr
         onClick={handleDelete}
         disabled={loading}
         title="Eliminar proyecto"
-        className="rounded-md p-1 text-zinc-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-40 dark:hover:bg-red-950"
+        className="rounded-md p-1 text-slate-400 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-40"
       >
         <svg
           width="14"
@@ -62,7 +62,7 @@ export function DeleteChatButton({ chatId, inChat = false, compact = false }: Pr
     <button
       onClick={handleDelete}
       disabled={loading}
-      className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-40 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950"
+      className="rounded-lg border border-red-200 bg-white px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50 disabled:opacity-40"
     >
       {loading ? "..." : "Eliminar"}
     </button>

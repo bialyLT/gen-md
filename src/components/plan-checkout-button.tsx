@@ -43,7 +43,7 @@ export function PlanCheckoutButton({
       <button
         onClick={checkout}
         disabled={loading}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-700 disabled:opacity-40"
+        className="w-full rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-sky-500 disabled:opacity-40"
       >
         {loading ? "Redirigiendo a Mercado Pago..." : label}
       </button>

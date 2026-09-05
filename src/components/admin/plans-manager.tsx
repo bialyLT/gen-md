@@ -137,7 +137,7 @@ export function PlansManager() {
     setError(null);
   }
 
-  if (loading) return <p className="text-sm text-zinc-400">Cargando…</p>;
+  if (loading) return <p className="text-sm text-slate-400">Cargando…</p>;
 
   return (
     <div>
@@ -146,7 +146,7 @@ export function PlansManager() {
         {!form && (
           <button
             onClick={startNew}
-            className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-white dark:text-black"
+            className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-sky-500"
           >
             Crear plan
           </button>
@@ -154,7 +154,7 @@ export function PlansManager() {
       </div>
 
       {error && (
-        <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-950 dark:text-red-200">
+        <p className="mb-4 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700">
           {error}
         </p>
       )}
@@ -162,22 +162,22 @@ export function PlansManager() {
       {form && (
         <form
           onSubmit={save}
-          className="mb-8 rounded-2xl border border-zinc-200 bg-white p-5 dark:border-zinc-800 dark:bg-zinc-950"
+          className="mb-8 rounded-2xl border border-sky-100 bg-white p-5 shadow-sm"
         >
-          <h2 className="mb-4 text-sm font-medium text-zinc-500">
+          <h2 className="mb-4 text-sm font-medium text-slate-500">
             {editingId ? "Editar plan" : "Nuevo plan"}
           </h2>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <label className="flex flex-col gap-1 text-xs text-zinc-500">
+            <label className="flex flex-col gap-1 text-xs text-slate-500">
               Nombre
               <input
                 required
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-500">
+            <label className="flex flex-col gap-1 text-xs text-slate-500">
               Precio (ARS)
               <input
                 required
@@ -185,10 +185,10 @@ export function PlansManager() {
                 min={1}
                 value={form.priceArs}
                 onChange={(e) => setForm({ ...form, priceArs: e.target.value })}
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-500 sm:col-span-2">
+            <label className="flex flex-col gap-1 text-xs text-slate-500 sm:col-span-2">
               Descripción
               <textarea
                 rows={2}
@@ -196,10 +196,10 @@ export function PlansManager() {
                 onChange={(e) =>
                   setForm({ ...form, description: e.target.value })
                 }
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-500">
+            <label className="flex flex-col gap-1 text-xs text-slate-500">
               Frecuencia (meses)
               <input
                 type="number"
@@ -209,10 +209,10 @@ export function PlansManager() {
                 onChange={(e) =>
                   setForm({ ...form, frequency: e.target.value })
                 }
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-500">
+            <label className="flex flex-col gap-1 text-xs text-slate-500">
               Link del plan en Mercado Pago
               <input
                 placeholder="https://www.mercadopago.com.ar/subscriptions/checkout?preapproval_plan_id=..."
@@ -220,20 +220,20 @@ export function PlansManager() {
                 onChange={(e) =>
                   setForm({ ...form, mpPlanInitPoint: e.target.value })
                 }
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               />
             </label>
-            <label className="flex flex-col gap-1 text-xs text-zinc-500">
+            <label className="flex flex-col gap-1 text-xs text-slate-500">
               Orden
               <input
                 type="number"
                 min={0}
                 value={form.sortOrder}
                 onChange={(e) => setForm({ ...form, sortOrder: e.target.value })}
-                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm text-zinc-900 dark:border-zinc-700 dark:bg-zinc-900 dark:text-zinc-100"
+                className="rounded-lg border border-sky-200 bg-white px-3 py-2 text-sm text-slate-900 outline-none focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
               />
             </label>
-            <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <label className="flex items-center gap-2 text-sm text-slate-600">
               <input
                 type="checkbox"
                 checked={form.active}
@@ -246,7 +246,7 @@ export function PlansManager() {
           <div className="mt-5 flex gap-2">
             <button
               type="submit"
-              className="rounded-lg bg-zinc-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 dark:bg-white dark:text-black"
+              className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-sky-500"
             >
               Guardar
             </button>
@@ -256,7 +256,7 @@ export function PlansManager() {
                 setForm(null);
                 setEditingId(null);
               }}
-              className="rounded-lg border border-zinc-300 px-4 py-2 text-sm transition hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-900"
+              className="rounded-lg border border-sky-200 bg-white px-4 py-2 text-sm text-sky-700 transition hover:bg-sky-50"
             >
               Cancelar
             </button>
@@ -264,10 +264,10 @@ export function PlansManager() {
         </form>
       )}
 
-      <div className="overflow-x-auto rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
+      <div className="overflow-x-auto rounded-2xl border border-sky-100 bg-white shadow-sm">
         <table className="w-full min-w-[560px] text-left text-sm">
           <thead>
-            <tr className="border-b border-zinc-200 text-xs text-zinc-400 dark:border-zinc-800">
+            <tr className="border-b border-sky-100 text-xs text-slate-400">
               <th className="px-4 py-3 font-medium">Nombre</th>
               <th className="px-4 py-3 font-medium">Precio</th>
               <th className="px-4 py-3 font-medium">Frecuencia</th>
@@ -276,12 +276,12 @@ export function PlansManager() {
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+          <tbody className="divide-y divide-sky-50">
             {plans.length === 0 && (
               <tr>
                 <td
                   colSpan={6}
-                  className="px-4 py-8 text-center text-zinc-400"
+                  className="px-4 py-8 text-center text-slate-400"
                 >
                   Todavía no hay planes. Creá el primero.
                 </td>
@@ -292,13 +292,13 @@ export function PlansManager() {
                 <td className="px-4 py-3 font-medium">{plan.name}</td>
                 <td className="px-4 py-3">$ {plan.priceArs.toLocaleString("es-AR")}</td>
                 <td className="px-4 py-3">cada {plan.frequency} mes(es)</td>
-                <td className="max-w-[260px] truncate px-4 py-3 text-xs text-zinc-400">
+                <td className="max-w-[260px] truncate px-4 py-3 text-xs text-slate-400">
                   {plan.mpPlanInitPoint ? (
                     <a
                       href={plan.mpPlanInitPoint}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-blue-600 underline dark:text-blue-400"
+                      className="text-sky-700 underline"
                     >
                       link
                     </a>
@@ -311,8 +311,8 @@ export function PlansManager() {
                     onClick={() => toggleActive(plan)}
                     className={`rounded-full px-3 py-1 text-xs font-medium ${
                       plan.active
-                        ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200"
-                        : "bg-zinc-200 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-400"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-slate-200 text-slate-600"
                     }`}
                   >
                     {plan.active ? "Activo" : "Inactivo"}
@@ -321,7 +321,7 @@ export function PlansManager() {
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => startEdit(plan)}
-                    className="mr-2 text-xs text-zinc-500 underline hover:text-zinc-900 dark:hover:text-zinc-100"
+                    className="mr-2 text-xs text-slate-500 underline hover:text-sky-700"
                   >
                     Editar
                   </button>

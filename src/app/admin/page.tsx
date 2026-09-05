@@ -33,19 +33,19 @@ export default async function AdminPage() {
         {stats.map((s) => (
           <div
             key={s.label}
-            className="rounded-2xl border border-zinc-200 bg-white p-4 sm:p-5 dark:border-zinc-800 dark:bg-zinc-950"
+            className="rounded-2xl border border-sky-100 bg-white p-4 shadow-sm sm:p-5"
           >
-            <p className="text-xs text-zinc-400">{s.label}</p>
-            <p className="mt-1 text-2xl font-semibold">{s.value}</p>
+            <p className="text-xs text-slate-400">{s.label}</p>
+            <p className="mt-1 text-2xl font-semibold text-slate-900">{s.value}</p>
           </div>
         ))}
       </div>
 
-      <section className="rounded-2xl border border-zinc-200 bg-white dark:border-zinc-800 dark:bg-zinc-950">
-        <h2 className="border-b border-zinc-200 px-5 py-4 text-sm font-medium text-zinc-500 dark:border-zinc-800">
+      <section className="rounded-2xl border border-sky-100 bg-white shadow-sm">
+        <h2 className="border-b border-sky-100 px-5 py-4 text-sm font-medium text-slate-500">
           Usuarios recientes
         </h2>
-        <ul className="divide-y divide-zinc-100 dark:divide-zinc-800">
+        <ul className="divide-y divide-sky-50">
           {recentUsers.map((u) => (
             <li
               key={u.id}
@@ -53,19 +53,19 @@ export default async function AdminPage() {
             >
               <div>
                 <p className="font-medium">{u.name ?? "—"}</p>
-                <p className="text-xs text-zinc-400">{u.email}</p>
+                <p className="text-xs text-slate-400">{u.email}</p>
               </div>
               <div className="flex items-center gap-2">
                 {u.role === "ADMIN" && (
-                  <span className="rounded bg-zinc-200 px-2 py-0.5 text-xs dark:bg-zinc-800">
+                  <span className="rounded bg-sky-100 px-2 py-0.5 text-xs text-sky-700">
                     Admin
                   </span>
                 )}
                 <span
                   className={`rounded px-2 py-0.5 text-xs ${
                     u.plan === "PRO"
-                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200"
-                      : "bg-zinc-100 text-zinc-600 dark:bg-zinc-800 dark:text-zinc-300"
+                      ? "bg-emerald-100 text-emerald-700"
+                      : "bg-slate-100 text-slate-600"
                   }`}
                 >
                   {u.plan}

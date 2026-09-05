@@ -26,7 +26,7 @@ export function NewChatButton() {
     <button
       onClick={handleClick}
       disabled={loading}
-      className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-medium text-white transition hover:bg-zinc-700 disabled:opacity-50 dark:bg-white dark:text-black dark:hover:bg-zinc-200"
+      className="rounded-full bg-sky-600 px-5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-sky-500 disabled:opacity-50"
     >
       {loading ? "Creando..." : "Nuevo proyecto"}
     </button>

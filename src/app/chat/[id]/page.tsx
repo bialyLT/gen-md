@@ -22,9 +22,9 @@ export default async function ChatPage({
   if (!chat || chat.userId !== session.user.id) redirect("/dashboard");
 
   return (
-    <div className="flex h-full flex-1 flex-col">
-      <header className="flex items-center justify-between border-b border-zinc-200 px-3 py-2.5 sm:px-4 sm:py-3 dark:border-zinc-800">
-        <Link href="/dashboard" className="text-sm text-zinc-500 hover:underline">
+    <div className="flex h-full flex-1 flex-col bg-white">
+      <header className="flex items-center justify-between border-b border-sky-100 bg-sky-50/70 px-3 py-2.5 sm:px-4 sm:py-3">
+        <Link href="/dashboard" className="text-sm text-sky-700 hover:underline">
           ← Panel
         </Link>
         <h1 className="truncate px-2 font-medium sm:px-4">{chat.title}</h1>
